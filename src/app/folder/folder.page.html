@@ -1,0 +1,110 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Controle Financeiro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Gerenciar Cartão</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Nome do Cartão</ion-label>
+        <ion-input [(ngModel)]="cartao.nomeCartao"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Número do Cartão</ion-label>
+        <ion-input [(ngModel)]="cartao.numeroCartao"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">CVV</ion-label>
+        <ion-input [(ngModel)]="cartao.cvv"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Validade</ion-label>
+        <ion-input [(ngModel)]="cartao.validade"></ion-input>
+      </ion-item>
+      <ion-button expand="block" (click)="adicionarCartao()" class="ion-margin-top">
+        {{ cartao.id ? 'Salvar Alterações' : 'Adicionar Cartão' }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Novo Movimento</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Cartão</ion-label>
+        <ion-select [(ngModel)]="selectedCardId">
+          <ion-select-option *ngFor="let cartao of cartoes" [value]="cartao.id">
+            {{ cartao.nomeCartao }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Data</ion-label>
+        <ion-datetime [(ngModel)]="transaction.date" displayFormat="DD/MM/YYYY"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Descrição</ion-label>
+        <ion-input [(ngModel)]="transaction.description"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Operação</ion-label>
+        <ion-select [(ngModel)]="transaction.operation">
+          <ion-select-option value="Crédito">Crédito</ion-select-option>
+          <ion-select-option value="Débito">Débito</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Valor</ion-label>
+        <ion-input type="number" [(ngModel)]="transaction.value"></ion-input>
+      </ion-item>
+      <ion-button expand="block" (click)="adicionarTransacao()" class="ion-margin-top">
+        Adicionar Movimento
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Cartões</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let cartao of cartoes">
+      <ion-label>
+        <h2>{{ cartao.nomeCartao }}</h2>
+        <p>{{ cartao.numeroCartao }} - Validade: {{ cartao.validade }}</p>
+      </ion-label>
+      <ion-button slot="end" color="warning" (click)="editarCartao(cartao.id)">Editar</ion-button>
+      <ion-button slot="end" color="danger" (click)="excluirCartao(cartao.id)">Excluir</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Movimentos</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let transaction of getTransactionsByCard()">
+      <ion-label>
+        <h2>{{ transaction.description }}</h2>
+        <h3>{{ transaction.date }} - {{ transaction.operation }}</h3>
+        <p>{{ formatCurrency(transaction.value) }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Saldo Disponível</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-text [color]="getBalance() >= 0 ? 'success' : 'danger'">
+        <h2>{{ formatCurrency(getBalance()) }}</h2>
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
